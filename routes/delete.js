@@ -1,3 +1,5 @@
+
+import { DELETE_TASK_QUERY } from "./queries.js"
 import { response } from "express"
 import { connection } from "../connection.js"
 
@@ -5,7 +7,7 @@ import { connection } from "../connection.js"
 export const deleteTask = (req, res) => {
     const taskId = req.params.id
     console.log(taskId)
-    connection.query(`DELETE FROM tasks WHERE id = ${taskId}`, (err, reponse) => {
+    connection.query(DELETE_TASK_QUERY, [taskId], (err, reponse) => {
         if(err){
             console.log("Error al eliminar la tarea")
             return res.send({

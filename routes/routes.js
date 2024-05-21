@@ -2,12 +2,14 @@
 import express from "express";
 export const router = express.Router();
 
-import { getTask } from "./get.js";
+import { getTask, authentication } from "./get.js";
 import { registerUser, sesionStart,  createTask} from "./post.js";
 import { deleteTask } from "./delete.js";
+import { updateStatusTask } from "./put.js";
 
 //Rutas GET
 router.get("/get-task/:id", getTask);
+router.get("/authentication", authentication)
 
 //Rutas POST
 router.post("/register", registerUser);
@@ -18,3 +20,4 @@ router.post("/create-task/:id", createTask);
 router.delete("/delete-task/:id", deleteTask);
 
 //Rutas UPDATE
+router.put("/update-status-task/:id", updateStatusTask);
