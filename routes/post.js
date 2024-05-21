@@ -54,7 +54,16 @@ const generateToken = (user) => {
 export const sesionStart = (req, res) => {
     const {username, password} = req.body
 
-    connection.query(LOGIN_QUERY, [username] ,(err, response) => {
+    connection.query(LOGIN_QUERY, [username], async (err, response) => {
+
+        const responseToSend = {
+            name: response[0].name,
+            last_name: response[0].last_name,
+            username: response[0].name,
+            email: response[0].email
+        }
+
+
         if(err){
             console.log("Usuario no encontrado");
             return res.send({
@@ -64,21 +73,27 @@ export const sesionStart = (req, res) => {
             })
         }
 
-        if(response.length === 0){
+        // Comparamos los hash de las contraseñas
+        const passwordHashed = response[0].password
+        const comparePass = await bcrypt.compare(password, passwordHashed)
+
+        if(!comparePass){
             return res.send({
                 status: "error",
                 message: "Usuario o contraseña incorrectos",
-                response: response,
             })
         }
 
-        const token = generateToken(username)
-        res.send({
-            status: "success",
-            message: "Usuario encontrado",
-            response: response[0],
-            token: token
-        })
+        if(comparePass){
+            const token = generateToken(username)
+            res.send({
+                status: "success",
+                message: "Usuario encontrado",
+                response: responseToSend,
+                token: token
+            })
+            return 
+        }
     })
 }
 
